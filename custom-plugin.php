@@ -1,9 +1,15 @@
 <?php
 /**
- * Plugin Name: Custom Plugin
- * Description: A custom lead-capture form for business setup in Dubai via shortcode [custom_plugin_calculator].
+ * Plugin Name: Custom Plugin - Dubai Business Setup Forms
+ * Description: A comprehensive lead-capture plugin for Dubai business setup services. Features three form types: Business Setup Cost Calculator, Expert Support Form, and Pricing Grid with popup. Use shortcode [custom_plugin_calculator] with form_type parameter (calculator, expert_support, pricing_grid).
  * Version: 1.0.0
  * Author: Muhammad Hassan
+ * 
+ * Shortcodes:
+ * [custom_plugin_calculator] - Default calculator form
+ * [custom_plugin_calculator form_type="calculator"] - Business setup cost calculator
+ * [custom_plugin_calculator form_type="expert_support"] - Expert support contact form
+ * [custom_plugin_calculator form_type="pricing_grid"] - Pricing packages grid with consultation popup
  */
 
 if (!defined('ABSPATH')) {
