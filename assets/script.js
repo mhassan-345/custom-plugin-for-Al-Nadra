@@ -80,10 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if(messageDiv) messageDiv.style.display = 'none';
 
             const formData = new FormData(calcForm);
-            formData.append('action', 'submit_dubai_calculator');
-            formData.append('nonce', dubaiCalcObj.nonce);
+            formData.append('action', 'submit_custom_calculator');
+            formData.append('nonce', customPluginObj.nonce);
 
-            fetch(dubaiCalcObj.ajax_url, {
+            fetch(customPluginObj.ajax_url, {
                 method: 'POST',
                 body: formData
             })
@@ -202,10 +202,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if(messageDiv) messageDiv.style.display = 'none';
 
             const formData = new FormData(expertForm);
-            formData.append('action', 'submit_dubai_calculator');
-            formData.append('nonce', dubaiCalcObj.nonce);
+            formData.append('action', 'submit_custom_calculator');
+            formData.append('nonce', customPluginObj.nonce);
 
-            fetch(dubaiCalcObj.ajax_url, {
+            fetch(customPluginObj.ajax_url, {
                 method: 'POST',
                 body: formData
             })
@@ -357,10 +357,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(messageDiv) messageDiv.style.display = 'none';
 
                 const formData = new FormData(form);
-                formData.append('action', 'submit_dubai_calculator');
-                formData.append('nonce', dubaiCalcObj.nonce);
+                formData.append('action', 'submit_custom_calculator');
+                formData.append('nonce', customPluginObj.nonce);
 
-                fetch(dubaiCalcObj.ajax_url, {
+                fetch(customPluginObj.ajax_url, {
                     method: 'POST',
                     body: formData
                 })
