@@ -27,6 +27,70 @@ class Custom_Plugin_Calculator {
 
         // Register custom element for Avada Builder
         add_action('fusion_builder_before_init', array($this, 'map_avada_element'));
+
+        // Add Global Expert Support Modal to Footer
+        add_action('wp_footer', array($this, 'render_expert_popup_footer'));
+    }
+
+    public function render_expert_popup_footer() {
+        ?>
+        <!-- Global Expert Support Modal -->
+        <div class="modal-overlay" id="expertSupportModal">
+            <div class="modal-container expert-modal-container" style="max-width: 600px;">
+                <button class="modal-close" id="closeExpertModal" aria-label="Close Contact Modal">&times;</button>
+                
+                <div class="expert-support-container" style="box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 40px;">
+                    <form class="expert-support-form js-expert-support-form">
+                        <h2>Get an expert support</h2>
+                        <p class="expert-support-subtitle">Fill in your contact details, and we'll get back to you soon.</p>
+
+                        <div class="expert-form-body">
+                            <div class="expert-toggle-container">
+                                <input type="hidden" name="expert_contact_type" class="expert_contact_type" value="phone">
+                                <button type="button" class="expert-toggle-btn active" data-type="phone" aria-label="Select Phone Contact">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" class="expert-icon" aria-hidden="true"><path fill="currentColor" d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.03 21c.76 0 .98-.66.98-1.21v-3.42c0-.54-.45-.99-.99-.99z"/></svg>
+                                    PHONE
+                                </button>
+                                <button type="button" class="expert-toggle-btn" data-type="email" aria-label="Select Email Contact">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" class="expert-icon" aria-hidden="true"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                    EMAIL
+                                </button>
+                            </div>
+
+                            <div class="input-line">
+                                <div class="country-code-container expert_phone_container">
+                                    <span class="flag-icon" aria-hidden="true">🇦🇪</span> <span class="flag-text">+971</span>
+                                    <input type="tel" name="contact_phone" class="expert_phone" placeholder="Phone number" aria-label="Phone number" required>
+                                </div>
+                                <div class="email-container expert_email_container" style="display:none;">
+                                    <input type="email" name="contact_email" class="expert_email" placeholder="Email Address" aria-label="Email Address">
+                                </div>
+                            </div>
+
+                            <div class="input-submit-line">
+                                <input type="text" name="contact_name" class="expert-name-input" placeholder="your name" aria-label="Your Name" required>
+                                <button type="submit" class="expert-submit-btn js-expert-submit-btn">SUBMIT</button>
+                            </div>
+
+                            <div class="expert-divider">
+                                <span aria-hidden="true">or</span>
+                            </div>
+
+                            <div class="expert-whatsapp">
+                                <a href="https://wa.me/971000000000" target="_blank" class="whatsapp-link" aria-label="Contact us on WhatsApp">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" style="color: #25D366; margin-right: 8px;" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                                    </svg>
+                                    <u>Contact us on WhatsApp</u>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="expert_msg" style="display:none; margin-top:20px; font-weight:bold; text-align:center;" role="alert"></div>
+                        <input type="hidden" name="form_source" value="expert_support">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php
     }
 
     public function map_avada_element() {

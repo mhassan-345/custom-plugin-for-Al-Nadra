@@ -230,6 +230,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     if(phoneInput) phoneInput.setAttribute('required', 'required');
                     if(emailInput) emailInput.removeAttribute('required');
                     
+                    setTimeout(() => {
+                        const parentModal = expertForm.closest('.modal-overlay');
+                        if (parentModal) {
+                            parentModal.classList.remove('active');
+                            document.body.style.overflow = '';
+                            if(messageDiv) messageDiv.style.display = 'none';
+                        }
+                    }, 3000);
+                    
                 } else {
                     if(messageDiv) {
                         messageDiv.style.color = '#dc3545';
@@ -399,6 +408,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     submitBtn.disabled = false;
                 });
             });
+        });
+    }
+
+    // 4. Handle Global Expert Support Modal Trigger
+    const expertModal = document.getElementById('expertSupportModal');
+    const closeExpertBtn = document.getElementById('closeExpertModal');
+
+    if (expertModal) {
+        // Move to body to prevent z-index issues
+        document.body.appendChild(expertModal);
+
+        // Open logic based on href anchor
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href="#expert-popup"]');
+            if (link) {
+                e.preventDefault();
+                expertModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+
+        // Close logic
+        if (closeExpertBtn) {
+            closeExpertBtn.addEventListener('click', () => {
+                expertModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+        expertModal.addEventListener('click', (e) => {
+            if (e.target === expertModal) {
+                expertModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
         });
     }
 });
