@@ -108,9 +108,10 @@ class Custom_Plugin_Calculator {
                         'description' => esc_attr__('Choose which form to display.', 'fusion-builder'),
                         'param_name'  => 'form_type',
                         'value'       => array(
-                            'calculator'     => esc_attr__('Business Setup Cost Calculator', 'fusion-builder'),
-                            'expert_support' => esc_attr__('Expert Support Form', 'fusion-builder'),
-                            'pricing_grid'   => esc_attr__('Pricing Grid with Popup', 'fusion-builder'),
+                            'calculator'      => esc_attr__('Business Setup Cost Calculator', 'fusion-builder'),
+                            'expert_support'  => esc_attr__('Expert Support Form', 'fusion-builder'),
+                            'pricing_grid'    => esc_attr__('Pricing Grid with Popup', 'fusion-builder'),
+                            'visa_calculator' => esc_attr__('UAE Visa Cost Calculator', 'fusion-builder'),
                         ),
                         'default'     => 'calculator',
                     )
@@ -330,6 +331,114 @@ class Custom_Plugin_Calculator {
                 </div>
             </div>
             <?php
+        } elseif ($atts['form_type'] === 'visa_calculator') {
+            ?>
+            <div class="dubai-calc-container">
+                <form class="dubai-calc-form js-dubai-calc-form">
+                    <div class="calc-section">
+                        <label class="section-label">Do you need visas for family members? <span style="color:#aaa;font-weight:normal;">(optional)</span></label>
+                        
+                        <div style="margin-top: 15px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:bold;font-size:14px;">Spouse(s)</label>
+                            <div class="pill-group" data-group="spouse_visas">
+                                <button type="button" class="pill-btn" data-value="Yes" aria-label="Yes">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Yes
+                                </button>
+                                <button type="button" class="pill-btn" data-value="No" aria-label="No">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> No
+                                </button>
+                                <button type="button" class="pill-btn" data-value="Haven't decided yet" aria-label="Haven't decided yet">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Haven't decided yet
+                                </button>
+                                <input type="hidden" name="spouse_visas" class="spouse_visas" value="">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:bold;font-size:14px;">Children</label>
+                            <div class="pill-group" data-group="children_visas">
+                                <button type="button" class="pill-btn" data-value="Yes" aria-label="Yes">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Yes
+                                </button>
+                                <button type="button" class="pill-btn" data-value="No" aria-label="No">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> No
+                                </button>
+                                <button type="button" class="pill-btn" data-value="Haven't decided yet" aria-label="Haven't decided yet">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Haven't decided yet
+                                </button>
+                                <input type="hidden" name="children_visas" class="children_visas" value="">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:bold;font-size:14px;">Parents</label>
+                            <div class="pill-group" data-group="parents_visas">
+                                <button type="button" class="pill-btn" data-value="Yes" aria-label="Yes">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Yes
+                                </button>
+                                <button type="button" class="pill-btn" data-value="No" aria-label="No">
+                                    <svg class="check-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> No
+                                </button>
+                                <input type="hidden" name="parents_visas" class="parents_visas" value="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calc-section">
+                        <label class="section-label">Select the type of visa you want to apply for <span style="color:#aaa;font-weight:normal;">(optional)</span></label>
+                        <div class="radio-group radio-vertical">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="visa_type[]" value="10-year Golden visa for buying property">
+                                <span class="checkbox-indicator"></span> 10-year Golden visa for buying property
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="visa_type[]" value="10-year Golden visa for a bank deposit">
+                                <span class="checkbox-indicator"></span> 10-year Golden visa for a bank deposit
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="visa_type[]" value="10-year Golden visa for executives">
+                                <span class="checkbox-indicator"></span> 10-year Golden visa for executives
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="visa_type[]" value="2-year visa for opening a company">
+                                <span class="checkbox-indicator"></span> 2-year visa for opening a company
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="calc-section">
+                        <label class="section-label">Additional comments</label>
+                        <textarea name="comments" placeholder="Enter text" rows="3" class="custom-textarea" aria-label="Additional comments"></textarea>
+                    </div>
+
+                    <div class="calc-section contact-section">
+                        <label class="section-label">Contact information <span style="color:#e6292f;">(required)</span></label>
+                        <div class="contact-toggle">
+                            <button type="button" class="toggle-btn active" data-type="email" aria-label="Select Email">
+                                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                EMAIL
+                            </button>
+                            <button type="button" class="toggle-btn" data-type="whatsapp" aria-label="Select WhatsApp">
+                                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                                WHATSAPP
+                            </button>
+                        </div>
+                        <input type="email" name="contact_value" class="contact-input js-contact-input" placeholder="Email" aria-label="Email or Phone Value" required>
+                        <input type="hidden" name="contact_type" class="contact_type js-contact_type" value="email">
+                    </div>
+
+                    <button type="submit" class="submit-btn js-dubai-calc-submit">
+                        GET A QUOTE IN 15 MINUTES*
+                    </button>
+                    <div class="form-footer">
+                        *Applications are processed during working hours: Monday to Friday, 9:00 AM to 6:00 PM (Dubai time)
+                    </div>
+                    
+                    <div class="dubai_calc_message" style="display:none; margin-top:20px; font-weight:bold; text-align:center;" role="alert"></div>
+                    <input type="hidden" name="form_source" value="visa_calculator">
+                </form>
+            </div>
+            <?php
         } else {
             ?>
             <div class="dubai-calc-container">
@@ -495,6 +604,41 @@ class Custom_Plugin_Calculator {
 
             wp_mail($admin_email, $subject, $message);
             wp_send_json_success(array('message' => 'Thank you! We will get back to you soon.'));
+
+        } elseif ($form_source === 'visa_calculator') {
+            $spouse_visas   = isset($_POST['spouse_visas']) ? sanitize_text_field($_POST['spouse_visas']) : '';
+            $children_visas = isset($_POST['children_visas']) ? sanitize_text_field($_POST['children_visas']) : '';
+            $parents_visas  = isset($_POST['parents_visas']) ? sanitize_text_field($_POST['parents_visas']) : '';
+            
+            $visa_types = isset($_POST['visa_type']) && is_array($_POST['visa_type']) ? array_map('sanitize_text_field', $_POST['visa_type']) : array();
+            $visa_types_str = !empty($visa_types) ? implode(', ', $visa_types) : 'None selected';
+            
+            $comments      = isset($_POST['comments']) ? sanitize_textarea_field($_POST['comments']) : '';
+            $contact_type  = isset($_POST['contact_type']) ? sanitize_text_field($_POST['contact_type']) : '';
+            
+            if ($contact_type === 'email') {
+                $contact_value = isset($_POST['contact_value']) ? sanitize_email($_POST['contact_value']) : '';
+            } else {
+                $contact_value = isset($_POST['contact_value']) ? sanitize_text_field($_POST['contact_value']) : '';
+            }
+
+            if (empty($contact_value)) {
+                wp_send_json_error(array('message' => 'Contact information is required.'));
+                return;
+            }
+
+            $subject     = 'New UAE Visa Cost Calculation Request';
+            $message     = "You have received a new visa quote request.\n\n";
+            $message    .= "Spouse(s) Visas: $spouse_visas\n";
+            $message    .= "Children Visas: $children_visas\n";
+            $message    .= "Parents Visas: $parents_visas\n";
+            $message    .= "Visa Types Selected: $visa_types_str\n";
+            $message    .= "Comments: $comments\n";
+            $message    .= "Contact Type: $contact_type\n";
+            $message    .= "Contact Value: $contact_value\n";
+
+            wp_mail($admin_email, $subject, $message);
+            wp_send_json_success(array('message' => 'Thank you! Your request has been received.'));
 
         } else {
             $activity_type = isset($_POST['activity_type']) ? sanitize_text_field($_POST['activity_type']) : '';
