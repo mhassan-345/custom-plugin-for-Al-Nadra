@@ -443,4 +443,186 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // 5. Services Slider Logic
+    const sliderWrappers = document.querySelectorAll('.services-slider-wrapper');
+    sliderWrappers.forEach(wrapper => {
+        const track = wrapper.querySelector('.js-services-slider-track');
+        const prevBtn = wrapper.querySelector('.js-slider-prev');
+        const nextBtn = wrapper.querySelector('.js-slider-next');
+        const cards = track ? track.querySelectorAll('.service-card') : [];
+        
+        if (!track || !prevBtn || !nextBtn || cards.length === 0) return;
+
+        let currentIndex = 0;
+        
+        function updateSlider() {
+            const cardWidth = cards[0].offsetWidth;
+            const gap = 20; // Matches CSS gap
+            const trackWidth = track.offsetWidth;
+            
+            // Calculate how many cards are visible
+            const visibleCards = Math.floor(trackWidth / cardWidth) || 1;
+            const maxIndex = Math.max(0, cards.length - visibleCards);
+
+            // Clamp currentIndex
+            if (currentIndex > maxIndex) currentIndex = maxIndex;
+            if (currentIndex < 0) currentIndex = 0;
+
+            const translateX = currentIndex * (cardWidth + gap);
+            track.style.transform = `translateX(-${translateX}px)`;
+
+            // Update arrow states
+            if (currentIndex === 0) {
+                prevBtn.classList.add('disabled');
+            } else {
+                prevBtn.classList.remove('disabled');
+            }
+
+            if (currentIndex === maxIndex) {
+                nextBtn.classList.add('disabled');
+            } else {
+                nextBtn.classList.remove('disabled');
+            }
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex--;
+            updateSlider();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex++;
+            updateSlider();
+        });
+
+        window.addEventListener('resize', updateSlider);
+        
+        // Touch Swipe Logic for Mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        track.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        track.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const cardWidth = cards[0].offsetWidth;
+            const trackWidth = track.offsetWidth;
+            const visibleCards = Math.floor(trackWidth / cardWidth) || 1;
+            const maxIndex = Math.max(0, cards.length - visibleCards);
+
+            if (touchEndX < touchStartX - 40) {
+                // Swipe left
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                    updateSlider();
+                }
+            }
+            if (touchEndX > touchStartX + 40) {
+                // Swipe right
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateSlider();
+                }
+            }
+        }
+
+        // Initial setup with a slight delay to ensure widths are calculated correctly
+        setTimeout(updateSlider, 100);
+    });
+
+    // 6. Handle Global Learn More Modal Trigger
+    const learnMoreModal = document.getElementById('learnMoreModal');
+    const closeLearnMoreBtn = document.getElementById('closeLearnMoreModal');
+
+    if (learnMoreModal) {
+        document.body.appendChild(learnMoreModal);
+
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href="#learn-more-popup"]');
+            if (link) {
+                e.preventDefault();
+                learnMoreModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+
+        if (closeLearnMoreBtn) {
+            closeLearnMoreBtn.addEventListener('click', () => {
+                learnMoreModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+        learnMoreModal.addEventListener('click', (e) => {
+            if (e.target === learnMoreModal) {
+                learnMoreModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Form submission
+        document.querySelectorAll('.js-learn-more-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const submitBtn = form.querySelector('.js-lm-submit-btn');
+                const messageDiv = form.querySelector('.lm_msg');
+                
+                if (!submitBtn) return;
+                const originalBtnText = submitBtn.innerText;
+                
+                submitBtn.innerText = 'PROCESSING...';
+                submitBtn.disabled = true;
+                if(messageDiv) messageDiv.style.display = 'none';
+
+                const formData = new FormData(form);
+                formData.append('action', 'submit_custom_calculator');
+                formData.append('nonce', customPluginObj.nonce);
+
+                fetch(customPluginObj.ajax_url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(messageDiv) messageDiv.style.display = 'block';
+                    if (data.success) {
+                        if(messageDiv) {
+                            messageDiv.style.color = '#fff';
+                            messageDiv.innerText = data.data.message;
+                        }
+                        
+                        setTimeout(() => {
+                            learnMoreModal.classList.remove('active');
+                            document.body.style.overflow = '';
+                            form.reset();
+                            if(messageDiv) messageDiv.style.display = 'none';
+                        }, 3000);
+                        
+                    } else {
+                        if(messageDiv) {
+                            messageDiv.style.color = '#ff4444';
+                            messageDiv.innerText = data.data.message || 'Something went wrong.';
+                        }
+                    }
+                })
+                .catch(error => {
+                    if(messageDiv) {
+                        messageDiv.style.display = 'block';
+                        messageDiv.style.color = '#ff4444';
+                        messageDiv.innerText = 'Server error. Please try again later.';
+                    }
+                })
+                .finally(() => {
+                    submitBtn.innerText = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+            });
+        });
+    }
 });

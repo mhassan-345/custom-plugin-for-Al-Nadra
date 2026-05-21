@@ -30,6 +30,123 @@ class Custom_Plugin_Calculator {
 
         // Add Global Expert Support Modal to Footer
         add_action('wp_footer', array($this, 'render_expert_popup_footer'));
+
+        // Add Learn More Popup to Footer
+        add_action('wp_footer', array($this, 'render_learn_more_popup_footer'));
+
+        // Slider Cards Custom Post Type
+        add_action('init', array($this, 'register_slider_cpt'));
+        add_action('add_meta_boxes', array($this, 'add_slider_meta_boxes'));
+        add_action('save_post', array($this, 'save_slider_meta_boxes'));
+    }
+
+    public function register_slider_cpt() {
+        $labels = array(
+            'name'               => _x('Slider Cards', 'post type general name', 'custom-plugin'),
+            'singular_name'      => _x('Slider Card', 'post type singular name', 'custom-plugin'),
+            'menu_name'          => _x('Slider Cards', 'admin menu', 'custom-plugin'),
+            'name_admin_bar'     => _x('Slider Card', 'add new on admin bar', 'custom-plugin'),
+            'add_new'            => _x('Add New', 'slider card', 'custom-plugin'),
+            'add_new_item'       => __('Add New Slider Card', 'custom-plugin'),
+            'new_item'           => __('New Slider Card', 'custom-plugin'),
+            'edit_item'          => __('Edit Slider Card', 'custom-plugin'),
+            'view_item'          => __('View Slider Card', 'custom-plugin'),
+            'all_items'          => __('All Slider Cards', 'custom-plugin'),
+            'search_items'       => __('Search Slider Cards', 'custom-plugin'),
+            'parent_item_colon'  => __('Parent Slider Cards:', 'custom-plugin'),
+            'not_found'          => __('No slider cards found.', 'custom-plugin'),
+            'not_found_in_trash' => __('No slider cards found in Trash.', 'custom-plugin')
+        );
+
+        $args = array(
+            'labels'             => $labels,
+            'public'             => false,
+            'publicly_queryable' => false,
+            'show_ui'            => true,
+            'show_in_menu'       => true,
+            'query_var'          => true,
+            'rewrite'            => array('slug' => 'slider_card'),
+            'capability_type'    => 'post',
+            'has_archive'        => false,
+            'hierarchical'       => false,
+            'menu_position'      => 20,
+            'menu_icon'          => 'dashicons-images-alt2',
+            'supports'           => array('title', 'editor', 'thumbnail')
+        );
+
+        register_post_type('slider_card', $args);
+    }
+
+    public function add_slider_meta_boxes() {
+        add_meta_box(
+            'slider_card_link_meta_box',
+            __('Card Link Details', 'custom-plugin'),
+            array($this, 'render_slider_meta_box'),
+            'slider_card',
+            'normal',
+            'default'
+        );
+    }
+
+    public function render_slider_meta_box($post) {
+        wp_nonce_field('slider_card_meta_box', 'slider_card_meta_box_nonce');
+        $learn_more_link = get_post_meta($post->ID, '_learn_more_link', true);
+        echo '<label for="learn_more_link"><strong>' . __('Learn More Link URL', 'custom-plugin') . '</strong></label><br>';
+        echo '<input type="url" id="learn_more_link" name="learn_more_link" value="' . esc_attr($learn_more_link) . '" style="width:100%;" />';
+    }
+
+    public function save_slider_meta_boxes($post_id) {
+        if (!isset($_POST['slider_card_meta_box_nonce'])) {
+            return;
+        }
+        if (!wp_verify_nonce($_POST['slider_card_meta_box_nonce'], 'slider_card_meta_box')) {
+            return;
+        }
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        if (isset($_POST['learn_more_link'])) {
+            update_post_meta($post_id, '_learn_more_link', sanitize_text_field($_POST['learn_more_link']));
+        }
+    }
+
+    public function render_learn_more_popup_footer() {
+        ?>
+        <!-- Global Learn More Modal -->
+        <div class="modal-overlay" id="learnMoreModal">
+            <div class="modal-container learn-more-modal-container">
+                <button class="modal-close" id="closeLearnMoreModal" aria-label="Close Modal" style="color: #fff; z-index: 20;">&times;</button>
+                
+                <div class="learn-more-left">
+                    <div class="learn-more-content">
+                        <h2>Want to<br>learn<br>more?</h2>
+                        <p>Receive this<br>exclusive offer<br>directly to your<br>email!</p>
+                    </div>
+                    <img src="<?php echo esc_url(plugins_url('assets/learn-more-Popup-image.png', __FILE__)); ?>" class="learn-more-image" alt="Want to learn more?" />
+                </div>
+
+                <div class="learn-more-right">
+                    <h3 class="learn-more-form-title">Fill out the form to receive exclusive deals.</h3>
+                    <form class="learn-more-form js-learn-more-form">
+                        <div class="form-row">
+                            <input type="email" name="contact_email" class="lm-input" placeholder="your email" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" name="contact_name" class="lm-input" placeholder="your name" required>
+                        </div>
+                        <button type="submit" class="submit-btn lm-submit-btn js-lm-submit-btn">SUBMIT</button>
+                        
+                        <div class="lm_msg" style="display:none; margin-top:15px; font-weight:bold; text-align:center; color:#fff;" role="alert"></div>
+                        <input type="hidden" name="form_source" value="learn_more_popup">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php
     }
 
     public function render_expert_popup_footer() {
@@ -112,6 +229,7 @@ class Custom_Plugin_Calculator {
                             'expert_support'  => esc_attr__('Expert Support Form', 'fusion-builder'),
                             'pricing_grid'    => esc_attr__('Pricing Grid with Popup', 'fusion-builder'),
                             'visa_calculator' => esc_attr__('UAE Visa Cost Calculator', 'fusion-builder'),
+                            'services_slider' => esc_attr__('Services Slider', 'fusion-builder'),
                         ),
                         'default'     => 'calculator',
                     )
@@ -210,7 +328,7 @@ class Custom_Plugin_Calculator {
                             <li class="feature-item">Business operations within and beyond UAE</li>
                         </ul>
                         <button class="btn-discuss trigger-popup">Discuss Details</button>
-                        <a href="#" class="link-more">Learn more</a>
+                        <a href="http://localhost/wordpress/uae-free-zone-company/" class="link-more">Learn more</a>
                     </div>
 
                     <div class="pricing-card" data-package="Dubai Offshore Company" data-price="9,500 AED">
@@ -223,7 +341,7 @@ class Custom_Plugin_Calculator {
                             <li class="feature-item">International business operations</li>
                         </ul>
                         <button class="btn-discuss trigger-popup">Discuss Details</button>
-                        <a href="#" class="link-more">Learn more</a>
+                        <a href="http://localhost/wordpress/offshore-company-setup/" class="link-more">Learn more</a>
                     </div>
 
                     <div class="pricing-card" data-package="Dubai Free Zones" data-price="12,750 AED">
@@ -236,7 +354,7 @@ class Custom_Plugin_Calculator {
                             <li class="feature-item">Business operations within and beyond UAE</li>
                         </ul>
                         <button class="btn-discuss trigger-popup">Discuss Details</button>
-                        <a href="#" class="link-more">Learn more</a>
+                        <a href="http://localhost/wordpress/mofa-attestation/" class="link-more">Learn more</a>
                     </div>
 
                     <div class="pricing-card" data-package="Dubai Mainland" data-price="16,500 AED">
@@ -250,7 +368,7 @@ class Custom_Plugin_Calculator {
                             <li class="feature-item">Unlimited visas</li>
                         </ul>
                         <button class="btn-discuss trigger-popup">Discuss Details</button>
-                        <a href="#" class="link-more">Learn more</a>
+                        <a href="http://localhost/wordpress/dubai-mainland/" class="link-more">Learn more</a>
                     </div>
                 </div>
             </div>
@@ -259,7 +377,7 @@ class Custom_Plugin_Calculator {
             <div class="modal-overlay" id="consultationModal">
                 <div class="modal-container">
                     <button class="modal-close" id="closeModal" aria-label="Close Contact Modal">&times;</button>
-                    
+                
                     <div class="modal-left">
                         <div class="expert-photo">
                         </div>
@@ -327,6 +445,67 @@ class Custom_Plugin_Calculator {
                             </svg>
                             Contact us on WhatsApp
                         </a>
+                    </div>
+                </div>
+            </div>
+            <?php
+        } elseif ($atts['form_type'] === 'services_slider') {
+            $args = array(
+                'post_type'      => 'slider_card',
+                'posts_per_page' => -1,
+                'post_status'    => 'publish',
+                'orderby'        => 'date',
+                'order'          => 'ASC'
+            );
+            $query = new WP_Query($args);
+
+            ?>
+            <div class="services-slider-wrapper">
+                <div class="services-slider-header">
+                    <div class="slider-arrows">
+                        <button class="slider-arrow prev-arrow js-slider-prev" aria-label="Previous cards">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <button class="slider-arrow next-arrow js-slider-next" aria-label="Next cards">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="services-slider-container">
+                    <div class="services-slider-track js-services-slider-track">
+                        <?php
+                        if ($query->have_posts()) {
+                            while ($query->have_posts()) {
+                                $query->the_post();
+                                $image_url = get_the_post_thumbnail_url(get_the_ID(), 'large');
+                                if (!$image_url) {
+                                    $image_url = 'https://via.placeholder.com/400x250?text=No+Image'; // Fallback
+                                }
+                                $link = get_post_meta(get_the_ID(), '_learn_more_link', true);
+                                $content = get_the_content();
+                                ?>
+                                <div class="service-card">
+                                    <div class="service-card-image" style="background-image: url('<?php echo esc_url($image_url); ?>');"></div>
+                                    <div class="service-card-content">
+                                        <h3 class="service-card-title"><?php the_title(); ?></h3>
+                                        <div class="service-card-text">
+                                            <?php echo wp_kses_post($content); ?>
+                                        </div>
+                                        <div class="service-card-footer">
+                                            <?php if (!empty($link)) : ?>
+                                                <a href="<?php echo esc_url($link); ?>" class="service-card-link">Learn more <span class="arrow-right">›</span></a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            wp_reset_postdata();
+                        } else {
+                            echo '<p>No services found. Please add Slider Cards in the backend.</p>';
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
@@ -443,7 +622,6 @@ class Custom_Plugin_Calculator {
             ?>
             <div class="dubai-calc-container">
                 <form class="dubai-calc-form js-dubai-calc-form">
-                    <h2 style="text-align: left !important; clear: both; width: 100%;">Business Setup Cost Calculation in Dubai</h2>
 
                     <div class="calc-section">
                         <label class="section-label">Type of activity (optional)</label>
@@ -553,7 +731,24 @@ class Custom_Plugin_Calculator {
         $form_source = isset($_POST['form_source']) ? sanitize_text_field($_POST['form_source']) : 'calculator';
         $admin_email = get_option('admin_email');
 
-        if ($form_source === 'expert_support') {
+        if ($form_source === 'learn_more_popup') {
+            $contact_name = isset($_POST['contact_name']) ? sanitize_text_field($_POST['contact_name']) : '';
+            $contact_email = isset($_POST['contact_email']) ? sanitize_email($_POST['contact_email']) : '';
+
+            if (empty($contact_email) || empty($contact_name)) {
+                wp_send_json_error(array('message' => 'Please fill in required fields.'));
+                return;
+            }
+
+            $subject = 'New Learn More Request';
+            $message = "You have received a new Learn More request.\n\n";
+            $message .= "Name: $contact_name\n";
+            $message .= "Email: $contact_email\n";
+
+            wp_mail($admin_email, $subject, $message);
+            wp_send_json_success(array('message' => 'Thank you! We will email you soon.'));
+
+        } elseif ($form_source === 'expert_support') {
             $contact_type = isset($_POST['expert_contact_type']) ? sanitize_text_field($_POST['expert_contact_type']) : 'phone';
             $contact_name = isset($_POST['contact_name']) ? sanitize_text_field($_POST['contact_name']) : '';
             
